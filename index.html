@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script  src="https://unpkg.com/babel-standalone@6/babel.min.js"></script> 
+    <title>Document</title>
+</head>
+<body>
+    
+    <div id="app"></div>
+    <script type="text/babel">
+    const { useRef ,useEffect, useState } = React;
+
+    const useHover = () => {
+        const ref = useRef();
+        const [isHovered,setHover] = useState(false);
+        const [position, setPosition] = useState({});
+        
+        const enter = () => setHover(true);
+        const leave = () => setHover(false);
+        const handleResize = () => {
+            setPosition(ref.current.getBoundingClientRect());
+        };
+
+        useEffect(() => {
+            handleResize();
+            ref.current.addEventListener("mouseenter",enter);
+            ref.current.addEventListener("mouseleave",leave);
+            return () => { 
+                ref.current.removeEventListener("mouseenter",setHover(true));
+            ref.current.removeEventListener("mouseleave",setHover(false));
+            }
+        },[ref])
+
+        return [ref,isHovered,position];
+    }
+    const Dog = ({state,isOuterHovered}) => {
+        
+        const _className = isOuterHovered ? "dog zoom":"dog" ;
+        
+        return (
+                <div className={_className}>                                       
+                    <img src={`./img/${state}.svg`}/>                
+                </div>
+        )
+    }
+
+    const Zone = () => {
+        const [innerRef,innerHovered,innerPos] = useHover();
+        const [outerRef,outerHovered] = useHover();
+        const [mousePos,setMousePos] = useState({x:0,y:0});
+        
+        useEffect(() => {
+            const setFromEvent = e => setMousePos({ x: e.clientX, y: e.clientY }); 
+            window.addEventListener("mousemove",setFromEvent);
+            return () => {
+                window.removeEventListener("mousemove",setFromEvent);
+            }
+        },[]);
+        
+        const rightArea = innerPos.left + (innerPos.width/3)*2
+        const leftArea = innerPos.left + (innerPos.width/3)
+        const right = mousePos.x > rightArea && mousePos.y > innerPos.y ;
+        const left = mousePos.x < leftArea && mousePos.y > innerPos.y ;
+        
+        let state = "nomal";
+        if (outerHovered) {
+            state = "nomal"
+        }
+        if (innerHovered) {
+            state = "happy" 
+        } 
+        if (left && innerHovered) {
+            state = "lefthappy"
+        }
+        if (right && innerHovered) {
+            state = "righthappy"
+        }
+
+        return (
+            <div>
+                <div className="notice_zone notice_zone_style" ref={outerRef}>
+                    <div className="happy_zone" ref={innerRef}/>
+                </div> 
+                <Dog state={state} isOuterHovered={outerHovered}/>
+            </div>
+        )
+    }
+
+    const App = () => {
+        return (
+            <div className="app">
+                <div className="container">
+                    <h1>柴犬です。なでてください。</h1>
+                </div>
+                <Zone/>
+            </div>
+
+        )
+    }
+
+    ReactDOM.render(<App/>,document.getElementById("app"))
+    </script>
+</body>
+</html>
+
+
+https://drive.google.com/file/d/1uUTO40PEDMTSh1t68MtzF0aIsPiQBsOw/view?usp=sharing right
+https://drive.google.com/uc?export=view&id=1uUTO40PEDMTSh1t68MtzF0aIsPiQBsOw
+
+https://drive.google.com/file/d/1hQzLcb58M1DXymXmiMV4jYw2hayijHyd/view?usp=sharing normal
+https://drive.google.com/file/d/1Z_ag2wtxnYEC5hjxW-tZowbmp7lSswdY/view?usp=sharing left
+https://drive.google.com/file/d/1Po-C94oWCCBN-FUyyKBSsBv3227mc198/view?usp=sharing happy

@@ -1,0 +1,74 @@
+body{
+    margin:0;
+}
+@mixin center-bottom {
+    position: absolute;
+    margin: 0;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#app{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow: hidden;
+    
+    .container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .notice_zone{
+        @include center-bottom;
+        cursor: pointer;
+        z-index: 10;
+        height: 1000px;
+        width: 1000px;
+        bottom: -50%;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+
+        &_style{
+            // transform: translateX(-50%);
+            
+            .happy_zone{
+                
+                z-index: 20;
+                height: 500px;
+                width: 500px;
+                border-radius: 50%;    
+            }
+        }
+
+        &.happy_zone{
+            z-index: 20;
+            height: 500px;
+            width: 500px;
+            border-radius: 50%;    
+        }
+    }
+
+    .dog{   
+        @include center-bottom;        
+        
+     &.zoom{
+        animation:excited 0.2s infinite;
+     }  
+     @keyframes excited {
+        0% {zoom:1.01;}
+        50% {zoom:1;}
+        100% {zoom:1.01;}
+    }
+
+    }
+
+}
+
+    
